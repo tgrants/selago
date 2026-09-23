@@ -11,3 +11,9 @@ What does the name stand for? No one really knows.
 - `base 10 2 <value>` - decimal to binary
 - `2c <value> <bytes>` - two's complement, binary -> binary
 - `2cd <value> <bytes>` - two's complement, decimal -> decimal
+
+## License
+
+This repository is licensed under the [European Union Public License 1.2](
+https://choosealicense.com/licenses/eupl-1.2/).
+For more details, see the [`LICENSE`](LICENSE) file.
