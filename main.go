@@ -63,65 +63,68 @@ func cmdBase(items []string) {
 
 	value := items[2]
 
-	if sourceBase == 2 && destBase == 10 {
-		cmdBd(value)
-	}
-	if sourceBase == 10 && destBase == 2 {
-		cmdDb(value)
+	if sourceBase == destBase {
+		fmt.Println(value)
+	} else if destBase == 10 {
+		toBase10(value, sourceBase)
+	} else if sourceBase == 10 {
+		v, e := strconv.Atoi(value)
+		if e != nil {
+			err("base: value not a valid base10 value")
+			return
+		}
+		fromBase10(int(v), destBase)
+	} else {
+		fromBase10(toBase10(value, sourceBase), destBase)
 	}
 }
 
-// cmdBd converts binary to decimal
-func cmdBd(in string) {
+// charToValue returns the numeric value of a digit rune
+func charToValue(in rune) int {
+	c := int(byte(unicode.ToUpper(in)))
+	if c >= '0' && c <= '9' {
+		return int(c - '0')
+	}
+	return int(c - 'A' + 10)
+}
+
+// valueToChar returns the digit rune of a numeric value
+func valueToChar(in int) rune {
+	if in >= 0 && in <= 9 {
+		return rune(in + '0')
+	}
+	return rune(in + 'A' - 10)
+}
+
+// fromBase10 converts a decimal number to an arbitrary base with explanation
+func fromBase10(in, base int) string {
+	reminders := []rune{}
+	for n := in; n > 0; n /= base {
+		r := n % base
+		fmt.Printf("%d/%d=%d A%d\n", n, base, n/base, r)
+		reminders = append([]rune{valueToChar(r)}, reminders...)
+	}
+
+	out := string(reminders)
+	fmt.Println(out)
+	return out
+}
+
+// toBase10 converts a number of an arbitrary base to decimal with explanation
+func toBase10(in string, base int) int {
 	value := 0
 	parts := []string{}
 
 	for i, c := range in {
-		if c != '0' && c != '1' {
-			err("bd: invalid binary number")
-			return
-		}
-
-		bit := int(c - '0')
+		v := charToValue(c)
 		position := len(in) - 1 - i
-		power := 1 << position
 
-		value += bit * power
-		parts = append(parts, fmt.Sprintf("%d*2^%d", bit, position))
+		value = value*base + v
+		parts = append(parts, fmt.Sprintf("%d*%d^%d", v, base, position))
 	}
 
 	fmt.Printf("%s = %d\n", strings.Join(parts, " + "), value)
-}
-
-// cmdDb converts decimal to binary
-func cmdDb(in string) {
-	value, e := strconv.Atoi(in)
-	if e != nil {
-		err("2cd: value not a valid integer")
-		value = 0
-	}
-
-	reminders := []int{}
-
-	for n := value; n > 0; n /= 2 {
-		remainder := n % 2
-		fmt.Printf("%d/2=%d A%d\n", n, n/2, remainder)
-		reminders = append(reminders, remainder)
-	}
-
-	for i := len(reminders) - 1; i >= 0; i-- {
-		fmt.Print(reminders[i])
-	}
-	fmt.Println()
-}
-
-// charValue returns the numeric value of a digit rune
-func charValue(l rune) int {
-	c := int(byte(unicode.ToUpper(l)))
-	if c >= '0' && c <= '9' {
-		return int(c - 48)
-	}
-	return int(c - 64)
+	return value
 }
 
 // cmd2c calculates two's complement for a binary number

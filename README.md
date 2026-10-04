@@ -7,8 +7,7 @@ What does the name stand for? No one really knows.
 
 ## Commands
 
-- `base 2 10 <value>`- binary to decimal
-- `base 10 2 <value>` - decimal to binary
+- `b|base <sourceBase> <destBase> <value>` - base conversion
 - `2c <value> <bytes>` - two's complement, binary -> binary
 - `2cd <value> <bytes>` - two's complement, decimal -> decimal
 
@@ -16,4 +15,4 @@ What does the name stand for? No one really knows.
 
 This repository is licensed under the [European Union Public License 1.2](
 https://choosealicense.com/licenses/eupl-1.2/).
-For more details, see the [`LICENSE`](LICENSE) file.
+For more details, see the [LICENSE](LICENSE) file.
